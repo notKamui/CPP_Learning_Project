@@ -61,12 +61,14 @@ Modifiez le programme pour tenir compte de cela.
 Ajoutez deux nouveaux inputs au programme permettant d'augmenter ou de diminuer cette valeur.
 > a: fps-- ; z: fps++
 
-Essayez maintenant de mettre en pause le programme en manipulant ce framerate. Que se passe-t-il ?\
+Essayez maintenant de mettre en pause le programme en manipulant ce framerate. Que se passe-t-il ?
 > Exception en point flottant (division par zéro, surement)
 
 Ajoutez une nouvelle fonctionnalité au programme pour mettre le programme en pause, et qui ne passe pas par le framerate.
+> opengl_interface.cpp -> timer -> ajout de variable globale 'paused'
 
 3) Identifiez quelle variable contrôle le temps de débarquement des avions et doublez-le.
+> config.hpp -> SERVICE_CYCLES
 
 4) Lorsqu'un avion a décollé, il réattérit peu de temps après.
 Faites en sorte qu'à la place, il soit retiré du programme.\
