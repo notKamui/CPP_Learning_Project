@@ -39,7 +39,7 @@ target_compile_features(tower PRIVATE cxx_std_17)
 if(MSVC)
   target_compile_options(tower PRIVATE /W4 /WX)
 else()
-  target_compile_options(tower PRIVATE -Wall -Wextra -Werror -Wshadow -Wno-deprecated)
+  target_compile_options(tower PRIVATE -Wall -Wextra -Werror -Wshadow -Wno-deprecated -lstdc++fs)
 endif()
 
 
