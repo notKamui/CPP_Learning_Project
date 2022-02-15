@@ -31,6 +31,15 @@ Réalisez ensuite un schéma présentant comment ces différentes classes intér
 > - Aircraft représente un avion et son rôle est d'avoir un numéro de vol (get_flight_num), de pouvoir donner sa distance à un point dans l'espace (distance_to), de s'afficher (display), et de pouvoir se déplacer (move)
 > - AircraftType représente un type d'avion et ses données (vitesse au sol, vitesse aérienne, accelération, sprite)
 > - Airport représente un aéroport, et son rôle est de pouvoir désigner sa tour de controle (get_tower), de s'afficher (display), et de déplacer ses terminaux (move)
+> - AirportType représente un type d'aéroport et ses données (position du croisement, position de la porte, positions des terminaux, et positions des pistes)
+> - Point2D représente un point avec deux coordonnées, et est capable d'effectuer des opérations géométriques basiques.
+> - Point3D représente un point avec trois coordonnées, et est capable d'effectuer des opérations géométriques basiques.
+> - Runway représente une piste d'atterrissage, et connais sa position de départ et de fin (c'est un segment) par rapport à la position de l'aéroport.
+> - Terminal représente un terminal de service, et a pour rôle de pouvoir exprimer s'il est en cours d'utilisation (in_use), s'il est en service (is_servicing), pouvoir y être assigné un avion (assing_craft), pouvoir démarrer son service (start_service), pouvoir finir son service (finish_service), et d'avancer dans son cycle de services (move)
+> - Tower représente une tour de controle et qui peut envoyer des instructions à un avion (visitor get_instructions) et d'être notifié quand un avion est arrivé à un terminal de service (observer arrived_at_terminal)
+> - Waypoint est un point 3D spécifique qui sait s'il est au sol ou en l'air, et à un terminal ou non.
+> - WaypointType est un enum représentant les différents types de waypoints
+> - TowerSimulation est la classe controller de la simulation entière, et son rôle est simplement de pouvoir être lancée (launch).
 
 Quelles classes et fonctions sont impliquées dans la génération du chemin d'un avion ?
 Quel conteneur de la librairie standard a été choisi pour représenter le chemin ?
