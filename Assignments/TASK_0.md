@@ -5,12 +5,19 @@
 Compilez et lancez le programme.
 
 Allez dans le fichier `tower_sim.cpp` et recherchez la fonction responsable de gérer les inputs du programme.
+> void TowerSimulation::create_keystrokes() const
+
 Sur quelle touche faut-il appuyer pour ajouter un avion ?
+> La touche 'c' crée un avion
+
 Comment faire pour quitter le programme ?
+> Les touches 'x' et 'q' quittent le programme
+
 A quoi sert la touche 'F' ?
+> La touche 'f' met l'application en plein écran (fullscreen)
 
 Ajoutez un avion à la simulation et attendez.
-Que est le comportement de l'avion ?
+Quel est le comportement de l'avion ?
 Quelles informations s'affichent dans la console ?
 
 Ajoutez maintenant quatre avions d'un coup dans la simulation.
