@@ -11,10 +11,14 @@ A quoi sert la touche 'F' ?
 
 Ajoutez un avion à la simulation et attendez.
 Que est le comportement de l'avion ?
+> L'avion atterri et tente d'aller en service pendant un moment, avant de finir et de redécoller, tout cela en boucle
+
 Quelles informations s'affichent dans la console ?
+> Pour un avion, chaque étape est annoté de son nom : il atterri, va en service, fini son service, puis décolle
 
 Ajoutez maintenant quatre avions d'un coup dans la simulation.
 Que fait chacun des avions ?
+> Ils font toujours la même chose, mais de manière organisée (s'il n'y a plus de place pour entrer en service, ils ne tentent pas d'atterrir)
 
 ## Analyse du code
 
@@ -23,6 +27,10 @@ Pour chacune d'entre elle, expliquez ce qu'elle représente et son rôle dans le
 
 Pour les classes `Tower`, `Aircaft`, `Airport` et `Terminal`, listez leurs fonctions-membre publiques et expliquez précisément à quoi elles servent.
 Réalisez ensuite un schéma présentant comment ces différentes classes intéragissent ensemble.
+
+> - Aircraft représente un avion et son rôle est d'avoir un numéro de vol (get_flight_num), de pouvoir donner sa distance à un point dans l'espace (distance_to), de s'afficher (display), et de pouvoir se déplacer (move)
+> - AircraftType représente un type d'avion et ses données (vitesse au sol, vitesse aérienne, accelération, sprite)
+> - Airport représente un aéroport, et son rôle est de pouvoir désigner sa tour de controle (get_tower), de s'afficher (display), et de déplacer ses terminaux (move)
 
 Quelles classes et fonctions sont impliquées dans la génération du chemin d'un avion ?
 Quel conteneur de la librairie standard a été choisi pour représenter le chemin ?
