@@ -37,23 +37,33 @@ Réalisez ensuite un schéma présentant comment ces différentes classes intér
 > - Runway représente une piste d'atterrissage, et connais sa position de départ et de fin (c'est un segment) par rapport à la position de l'aéroport.
 > - Terminal représente un terminal de service, et a pour rôle de pouvoir exprimer s'il est en cours d'utilisation (in_use), s'il est en service (is_servicing), pouvoir y être assigné un avion (assing_craft), pouvoir démarrer son service (start_service), pouvoir finir son service (finish_service), et d'avancer dans son cycle de services (move)
 > - Tower représente une tour de controle et qui peut envoyer des instructions à un avion (visitor get_instructions) et d'être notifié quand un avion est arrivé à un terminal de service (observer arrived_at_terminal)
-> - Waypoint est un point 3D spécifique qui sait s'il est au sol ou en l'air, et à un terminal ou non.
+> - Waypoint est un point 3D spécifique sur le chemin d'un avion, qui sait s'il est au sol ou en l'air, et à un terminal ou non.
 > - WaypointType est un enum représentant les différents types de waypoints
 > - TowerSimulation est la classe controller de la simulation entière, et son rôle est simplement de pouvoir être lancée (launch).
 
 Quelles classes et fonctions sont impliquées dans la génération du chemin d'un avion ?
 Quel conteneur de la librairie standard a été choisi pour représenter le chemin ?
+> C'est une deque
+
 Expliquez les intérêts de ce choix.
+> On peu emplacer et retirer au début et à la fin (une queue à double entrée/sortie)
 
 ## C- Bidouillons !
 
 1) Déterminez à quel endroit du code sont définies les vitesses maximales et accélération de chaque avion.
 Le Concorde est censé pouvoir voler plus vite que les autres avions.
 Modifiez le programme pour tenir compte de cela.
+> Voir aircraft_types.hpp
 
 2) Identifiez quelle variable contrôle le framerate de la simulation.
+> GL::ticks_per_sec
+
 Ajoutez deux nouveaux inputs au programme permettant d'augmenter ou de diminuer cette valeur.
+> a: fps-- ; z: fps++
+
 Essayez maintenant de mettre en pause le programme en manipulant ce framerate. Que se passe-t-il ?\
+> Exception en point flottant (division par zéro, surement)
+
 Ajoutez une nouvelle fonctionnalité au programme pour mettre le programme en pause, et qui ne passe pas par le framerate.
 
 3) Identifiez quelle variable contrôle le temps de débarquement des avions et doublez-le.
