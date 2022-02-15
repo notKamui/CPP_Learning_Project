@@ -7,6 +7,7 @@
 #include "tower.hpp"
 #include "waypoint.hpp"
 
+#include <string>
 #include <string_view>
 
 class Aircraft : public GL::Displayable, public GL::DynamicObject

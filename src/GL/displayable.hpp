@@ -1,7 +1,5 @@
 #pragma once
 
-#include "displayable.hpp"
-
 #include <vector>
 
 namespace GL {

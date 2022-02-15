@@ -4,44 +4,60 @@ guide planes to land safely
 ### Requirements
 
 The following software is necessary to compile and run the program
-1. C++ compiler capable of compiling C++17 code (for example, gcc version 8 or above)
+1. C++ compiler capable of compiling C++17 code (for example, gcc version 9 or above)
 2. freeglut
 3. OpenGL version 1.1 or above
 4. CMake version 3 or above to generate the project
 
-### Installation of FreeGLUT
-
 #### Linux
-Just use your favorite package manager to install it (apt-get, snap, pacman, or whatever).
+
+Make sure your gcc version is 9 or above.
+If it's not, and your package manager doesn't propose it, then you may need to upgrade your system first.
+
+Then install freeglut using your favorite package manager.
 
 #### Mac
-Install using the package manager (`brew`).
+
+Install freeglut using a package manager like `brew`.
 
 **Attention**:
-For maxOS > 10.8, you'll need to install and run XQuartz.
+For macOS > 10.8, you'll need to install and run XQuartz.
 
 **Troubleshoot**:
 If you get messages like `<some lib> was built for newer macOS version (XX) than being linked (XX)` try updating/installing `freeglut` with brew!
 
 #### Windows
-Go to this [page](http://freeglut.sourceforge.net/) and select the latest stable release to get the source code.\
-Then open the folder with VSCode, and run `CMake: Configure` command.
 
-Once the project is configured, open the `CMakeCache.txt` file that should have been generated inside the `build` folder.\
-Look for `CMAKE_INSTALL_PREFIX`, which indicates where on your computer the library will be installed. Modify this location if the default one doesn't suit you.\
-Save the file and run `CMake: Configure` once again, to apply the changes.
+Install the MSYS2 package manager by following the instructions on this page : https://www.msys2.org/.
+Once you have finished, you can install freeglut by tapping `pacman -S mingw-w64-x86_64-freeglut` in the MSYS2 console.
 
-Run the `CMake: Build` command on the [ALL_BUILD] target, and wait for the build to finish.\
-If it succeeds, then you can run `CMake: Install`.
+Edit the "Path" environment variable (the user or system one):
+1. Add "C:\msys64\mingw64\bin" to it (if you installed MSYS2 elsewhere, then update the path accordingly).
+2. If you had a previous MinGW version installed (usually located in C:\mingw"), remove its bin folder from the Path.
 
-If you installed the library in an exotic location, you will need to indicate it to CMake.
-To do so, modify the `CMAKE_PREFIX_PATH` environment variable (or create it if it doesn't exist yet), and add the installation folder of the library in it.
-If it already contains a path, you can append another one by separating it with `;` (do not add any space before or after it). 
+Open the project inside VSCode.
+Run the command `Preferences: Open User Settings`.
+Search for the setting `CMake: Mingw Search Dirs` and add `"C:\msys64\mingw64` to it (without the bin folder).
+Restart VSCode, run the command `CMake: Scan For Kits`, then `CMake: Edit User-Local CMake Kits`.
+Add the following code inside the JSON of the MSYS2 compilers:
+```json
+"preferredGenerator": {
+  "name": "MinGW Makefiles"
+},
+"environmentVariables": {
+  "CMT_MINGW_PATH": "C:\\msys64\\mingw64\\bin"
+}
+```
+Restart VSCode again, and run `CMake: Configure`.
 
 ### Build
 
-To build the program, it should be sufficient to enter the top-level directory and type
+You can build and execute the program from VSCode, as usual.
+
+If you want to build it from a terminal, place yourself inside the top-level directory of the project, and use the following commands: 
 ```
-cmake .
+mkdir build
+cd build
+cmake ..
 make
 ```

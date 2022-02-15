@@ -1,6 +1,6 @@
 # Se familiariser avec l'existant
 
-## Exécution
+## A- Exécution
 
 Compilez et lancez le programme.
 
@@ -20,7 +20,7 @@ Ajoutez maintenant quatre avions d'un coup dans la simulation.
 Que fait chacun des avions ?
 > Ils font toujours la même chose, mais de manière organisée (s'il n'y a plus de place pour entrer en service, ils ne tentent pas d'atterrir)
 
-## Analyse du code
+## B- Analyse du code
 
 Listez les classes du programme à la racine du dossier src/.
 Pour chacune d'entre elle, expliquez ce qu'elle représente et son rôle dans le programme.
@@ -36,7 +36,7 @@ Quelles classes et fonctions sont impliquées dans la génération du chemin d'u
 Quel conteneur de la librairie standard a été choisi pour représenter le chemin ?
 Expliquez les intérêts de ce choix.
 
-## Bidouillons !
+## C- Bidouillons !
 
 1) Déterminez à quel endroit du code sont définies les vitesses maximales et accélération de chaque avion.
 Le Concorde est censé pouvoir voler plus vite que les autres avions.
@@ -44,17 +44,23 @@ Modifiez le programme pour tenir compte de cela.
 
 2) Identifiez quelle variable contrôle le framerate de la simulation.
 Ajoutez deux nouveaux inputs au programme permettant d'augmenter ou de diminuer cette valeur.
-Essayez maintenant de mettre en pause le programme en manipulant ce framerate. Que se passe-t-il ? Fixez le problème.
+Essayez maintenant de mettre en pause le programme en manipulant ce framerate. Que se passe-t-il ?\
+Ajoutez une nouvelle fonctionnalité au programme pour mettre le programme en pause, et qui ne passe pas par le framerate.
 
 3) Identifiez quelle variable contrôle le temps de débarquement des avions et doublez-le.
 
-4) Lorsqu'un avion décolle, celui-ci n'est pas retiré du programme.
-Faites en sorte qu'il le soit.
+4) Lorsqu'un avion a décollé, il réattérit peu de temps après.
+Faites en sorte qu'à la place, il soit retiré du programme.\
+Indices :\
+A quel endroit pouvez-vous savoir que l'avion doit être supprimé ?\
+Pourquoi n'est-il pas sûr de procéder au retrait de l'avion dans cette fonction ?
+A quel endroit de la callstack pourriez-vous le faire à la place ?\
+Que devez-vous modifier pour transmettre l'information de la première à la seconde fonction ?
 
 5) Lorsqu'un objet de type `Displayable` est créé, il faut ajouter celui-ci manuellement dans la liste des objets à afficher.
 Il faut également penser à le supprimer de cette liste avant de le détruire.
-Que pourriez-vous faire afin que l'ajout et la suppression de la liste soit "automatiquement gérée" lorsqu'un `Displayable` est créé ou détruit ?
-Faites de même pour `DynamicObject`.
+Faites en sorte que l'ajout et la suppression de `display_queue` soit "automatiquement gérée" lorsqu'un `Displayable` est créé ou détruit.
+Pourquoi n'est-il pas spécialement pertinent d'en faire de même pour `DynamicObject` ?
 
 6) La tour de contrôle a besoin de stocker pour tout `Aircraft` le `Terminal` qui lui est actuellement attribué, afin de pouvoir le libérer une fois que l'avion décolle.
 Cette information est actuellement enregistrée dans un `std::vector<std::pair<const Aircraft*, size_t>>` (size_t représentant l'indice du terminal).
@@ -62,14 +68,14 @@ Cela fait que la recherche du terminal associé à un avion est réalisée en te
 Cela n'est pas grave tant que ce nombre est petit, mais pour préparer l'avenir, on aimerait bien remplacer le vector par un conteneur qui garantira des opérations efficaces, même s'il y a beaucoup de terminaux.\
 Modifiez le code afin d'utiliser un conteneur STL plus adapté. Normalement, à la fin, la fonction `find_craft_and_terminal(const Aicraft&)` ne devrait plus être nécessaire.
 
-## Théorie
+## D- Théorie
 
 1) Comment a-t-on fait pour que seule la classe `Tower` puisse réserver un terminal de l'aéroport ?
 
 2) En regardant le contenu de la fonction `void Aircraft::turn(Point3D direction)`, pourquoi selon-vous ne sommes-nous pas passer par une réference ?
 Pensez-vous qu'il soit possible d'éviter la copie du `Point3D` passé en paramètre ?
 
-## Bonus
+## E- Bonus
 
 Le temps qui s'écoule dans la simulation dépend du framerate du programme.
 La fonction move() n'utilise pas le vrai temps. Faites en sorte que si.
