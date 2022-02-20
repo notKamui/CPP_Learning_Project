@@ -92,6 +92,12 @@ void Aircraft::move()
 {
     if (waypoints.empty())
     {
+        if (serviced) {
+            GL::display_queue.erase(this);
+            GL::move_queue.erase(this);
+            delete this;
+            return;
+        }
         waypoints = control.get_instructions(*this);
     }
 
