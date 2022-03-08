@@ -71,6 +71,12 @@ target_include_directories(tower SYSTEM PRIVATE ${OPENGL_INCLUDE_DIR})
 target_link_libraries(tower	PRIVATE ${OPENGL_LIBRARIES})
 
 
+## FileSystem
+if((${CMAKE_CXX_COMPILER_ID} MATCHES "GNU") AND (${CMAKE_CXX_COMPILER_VERSION} LESS 9))
+	target_link_libraries(tower	PRIVATE stdc++fs)
+endif()
+
+
 ##########
 # Assets #
 ##########
