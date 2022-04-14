@@ -7,6 +7,11 @@ Chaque avion créé est ensuite placé dans les files `GL::display_queue` et `GL
 
 Si à un moment quelconque du programme, vous souhaitiez accéder à l'avion ayant le numéro de vol "AF1250", que devriez-vous faire ?
 
+> Actuellement, c'est très peu pratique : il faudrait parcourir la move_queue et y trouver les instances
+> d'aircraft, puis parmis elles, trouver celle qui a le numéro de vol "AF1250".
+> C'est très sale et dangereux d'un point de vue encapsulation et responsabilité. Ça ne
+> respecte pas le principe SOLID.
+
 ---
 
 ## Objectif 1 - Référencement des avions
@@ -20,6 +25,8 @@ Vous avez 2 choix possibles :
 - donner ce rôle à une classe existante.
 
 Réfléchissez aux pour et contre de chacune de ces options.
+> Il serait possible de gérer ça dans TowerSimulation, mais c'est une classe qui possède déjà
+> beaucoup de responsabilités qui devraient être déléguées.
 
 Pour le restant de l'exercice, vous partirez sur le premier choix.
 
@@ -30,9 +37,15 @@ Il serait donc bon de savoir qui est censé détruire les avions du programme, a
 
 Répondez aux questions suivantes :
 1. Qui est responsable de détruire les avions du programme ? (si vous ne trouvez pas, faites/continuez la question 4 dans TASK_0)
+> c'est la fonction timer dans opengl_interface
 2. Quelles autres structures contiennent une référence sur un avion au moment où il doit être détruit ?
+> GL::display_queue et GL::move_queue
 3. Comment fait-on pour supprimer la référence sur un avion qui va être détruit dans ces structures ?
+> Dans la move_queue, on la retire "à la main" avec un parcours au moment d'effectuer les moves.
+> Dans la display_queue, c'est la class Displayable qui s'en occupe elle-même a sa destruction
 4. Pourquoi n'est-il pas très judicieux d'essayer d'appliquer la même chose pour votre `AircraftManager` ?
+> Si on essaie d'appliquer le même principe, on garderai des références sur les cases de notre structure,
+> ce qui risquerai d'emmener à la perte de cette référence, et donc à des accès sur des nullptr.
 
 Pour simplifier le problème, vous allez déplacer l'ownership des avions dans la classe `AircraftManager`.
 Vous allez également faire en sorte que ce soit cette classe qui s'occupe de déplacer les avions, et non plus la fonction `timer`.
@@ -41,6 +54,9 @@ Vous allez également faire en sorte que ce soit cette classe qui s'occupe de d�
 
 Ajoutez un attribut `aircrafts` dans le gestionnaire d'avions.
 Choisissez un type qui met bien en avant le fait que `AircraftManager` est propriétaire des avions.
+
+> `std::vector<std::unique_ptr<Aircraft>>` ; on utilise unique_ptr pour garantir que c'est bien
+> cette structure qui est propriétaire des avions.
 
 Ajoutez un nouvel attribut `aircraft_manager` dans la classe `TowerSimulation`.
 

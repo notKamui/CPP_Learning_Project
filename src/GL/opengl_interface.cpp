@@ -79,18 +79,9 @@ void timer(const int step)
     last_tick = now;
     if (!paused)
     {
-        for (auto it = move_queue.begin(); it != move_queue.end();)
+        for (auto& dObj : move_queue)
         {
-            auto *dObj = *it;
-            if (dObj->move(dt))
-            {
-                ++it;
-            }
-            else
-            {
-                it = move_queue.erase(it);
-                delete dObj;
-            }
+            dObj->move(dt);
         }
     }
     glutPostRedisplay();

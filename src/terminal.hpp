@@ -39,12 +39,11 @@ public:
         }
     }
 
-    bool move(float dt) override
+    void move(float dt) override
     {
         if (in_use() && is_servicing())
         {
             service_progress += std::ceil(dt);
         }
-        return true;
     }
 };
