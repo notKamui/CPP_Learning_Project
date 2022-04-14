@@ -57,8 +57,10 @@ void TowerSimulation::create_keystrokes() const
     GL::keystrokes.emplace('+', []() { GL::change_zoom(0.95f); });
     GL::keystrokes.emplace('-', []() { GL::change_zoom(1.05f); });
     GL::keystrokes.emplace('f', []() { GL::toggle_fullscreen(); });
-    GL::keystrokes.emplace('a', []() { GL::ticks_per_sec--; }); // fps--
+    GL::keystrokes.emplace('a', []() { GL::ticks_per_sec--; std::max(GL::ticks_per_sec, 1u); }); // fps--
     GL::keystrokes.emplace('z', []() { GL::ticks_per_sec++; }); // fps++
+    GL::keystrokes.emplace('e', []() { GL::simulation_speed -= .1f; std::max(GL::simulation_speed, 0.0f); }); // speed--
+    GL::keystrokes.emplace('r', []() { GL::simulation_speed += .1f; }); // speed++
     GL::keystrokes.emplace('p', []() { GL::paused = !GL::paused; });
 }
 

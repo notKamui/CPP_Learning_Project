@@ -159,3 +159,5 @@ Passez ensuite cette valeur à la fonction `move` des `DynamicObject`, et utilis
 Vérifiez maintenant en exécutant le programme que, lorsque augmentez le framerate du programme, vous n'augmentez pas la vitesse de la simulation.
 
 Ajoutez ensuite deux nouveaux inputs permettant d'accélérer ou de ralentir la simulation.
+
+> Ajouté cette fonctionnalité aux touches `e` et `r`.

@@ -88,7 +88,7 @@ void Aircraft::add_waypoint(const Waypoint& wp, const bool front)
     }
 }
 
-bool Aircraft::move()
+bool Aircraft::move(float dt)
 {
     if (waypoints.empty())
     {
@@ -102,7 +102,7 @@ bool Aircraft::move()
     {
         turn_to_waypoint();
         // move in the direction of the current speed
-        pos += speed;
+        pos += speed * dt;
 
         // if we are close to our next waypoint, stike if off the list
         if (!waypoints.empty() && distance_to(waypoints.front()) < DISTANCE_THRESHOLD)
