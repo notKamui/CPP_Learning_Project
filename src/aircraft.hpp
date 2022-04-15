@@ -13,7 +13,7 @@
 class Aircraft : public GL::Displayable, public GL::DynamicObject
 {
 private:
-    constexpr static long FUEL_THRESHOLD = 2000;
+    constexpr static long FUEL_THRESHOLD = 200;
     constexpr static long FUEL_MAX = 3000;
 
     const AircraftType& type;
@@ -25,7 +25,7 @@ private:
     bool is_at_terminal        = false;
     bool serviced              = false;
     bool finished              = false;
-    long fuel                   = (rand() % (FUEL_MAX-150)) + 150; // random fuel between 150 and 3000
+    long fuel                  = (rand() % (FUEL_MAX-150)) + 150; // random fuel between 150 and 3000
 
     // turn the aircraft to arrive at the next waypoint
     // try to facilitate reaching the waypoint after the next by facing the
