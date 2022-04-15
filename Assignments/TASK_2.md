@@ -7,6 +7,14 @@
 `TowerSimulation::display_help()` est chargé de l'affichage des touches disponibles.
 Dans sa boucle, remplacez `const auto& ks_pair` par un structured binding adapté.
 
+```cpp
+for (const auto& [first, _] : GL::keystrokes)
+{
+    std::cout << first << ' ';
+}
+```
+> second est ignoré puisque l'on n'en a pas besoin.
+
 ### B - Algorithmes divers
 
 1. `AircraftManager::move()` (ou bien `update()`) supprime les avions de la `move_queue` dès qu'ils sont "hors jeux".
@@ -15,9 +23,27 @@ Remplacez votre boucle avec un appel à `std::remove_if`.
 
 **Attention**: pour cela c'est necessaire que `AircraftManager` stocke les avion dans un `std::vector` ou `std::list` (c'est déjà le cas pour la solution filé).
 
+```cpp
+void AircraftManager::move(float dt)
+{
+    aircrafts.erase(std::remove_if(aircrafts.begin(), aircrafts.end(), [dt](const auto &aircraft) {
+       if (aircraft->finished) {
+           return true;
+       }
+       else
+       {
+           aircraft->move(dt);
+           return false;
+       }
+    }), aircrafts.end());
+}
+```
+> On utilise remove_if (avec erase). Pour éviter une deuxième "tour de boucle", on peut move l'aircraft
+> depuis le predicate.
+
 2. Pour des raisons de statistiques, on aimerait bien être capable de compter tous les avions de chaque airline.
 A cette fin, rajoutez des callbacks sur les touches `0`..`7` de manière à ce que le nombre d'avions appartenant à `airlines[x]` soit affiché en appuyant sur `x`.
-Rendez-vous compte de quelle classe peut acquérir cet information. Utilisez la bonne fonction de `<algorithm>` pour obtenir le résultat.
+Rendez-vous compte de quelle classe peut acquérir cette information. Utilisez la bonne fonction de `<algorithm>` pour obtenir le résultat.
 
 ### C - Relooking de Point3D
 

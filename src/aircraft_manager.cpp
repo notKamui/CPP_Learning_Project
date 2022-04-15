@@ -7,16 +7,14 @@ void AircraftManager::add(std::unique_ptr<Aircraft>& aircraft)
 
 void AircraftManager::move(float dt)
 {
-    for (auto it = aircrafts.begin(); it != aircrafts.end();)
-    {
-        if (!(*it)->finished)
-        {
-            (*it)->move(dt);
-            ++it;
-        }
-        else
-        {
-            it = aircrafts.erase(it);
-        }
-    }
+    aircrafts.erase(std::remove_if(aircrafts.begin(), aircrafts.end(), [dt](const auto &aircraft) {
+       if (aircraft->finished) {
+           return true;
+       }
+       else
+       {
+           aircraft->move(dt);
+           return false;
+       }
+    }), aircrafts.end());
 }

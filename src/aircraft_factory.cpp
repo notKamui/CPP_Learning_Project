@@ -34,3 +34,14 @@ void AircraftFactory::init_aircraft_types()
     aircraft_types[1] = new AircraftType { .02f, .05f, .02f, MediaPath { "b707_jat.png" } };
     aircraft_types[2] = new AircraftType { .02f, .10f, .02f, MediaPath { "concorde_af.png" } };
 }
+
+long AircraftFactory::count_aircraft_from_airline(unsigned int airline) const
+{
+    auto &line = airlines[airline];
+    return std::count_if(
+        used_flight_numbers.begin(),
+        used_flight_numbers.end(),
+        [line](const std::string &flight_number) {
+            return flight_number.rfind(line, 0) == 0;
+        });
+}
