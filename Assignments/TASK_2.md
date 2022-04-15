@@ -122,6 +122,20 @@ Pour pouvoir prioriser les avions avec moins d'essence, il faudrait déjà que l
 \- si l'avion attend qu'on lui assigne un terminal, on appelle `Tower::reserve_terminal` et on modifie ses `waypoints` si le terminal a effectivement pu être réservé,\
 \- si l'avion a terminé sa course actuelle, on appelle `Tower::get_instructions` (comme avant).
 
+> Avant de vérifier que la queue est vide, on essaie de réserver un terminal si l'avion n'en a pas
+```cpp
+if (is_circling() && !has_terminal())
+    {
+        auto new_waypoints = control.reserve_terminal(*this);
+        if (!new_waypoints.empty())
+        {
+            waypoints = std::move(new_waypoints);
+        }
+    }
+}
+```
+> On fait bien de remarquer que les waypoints doivent être écrasés si on a réussi à trouver un terminal.
+
 ### C - Minimiser les crashs
 
 Grâce au changement précédent, dès lors qu'un terminal est libéré, il sera réservé lors du premier appel à `Aircraft::update` d'un avion recherchant un terminal.
@@ -151,6 +165,18 @@ C - NotReserved / Fuel: 300
 
 Assurez-vous déjà que le conteneur `AircraftManager::aircrafts` soit ordonnable (`vector`, `list`, etc).\
 Au début de la fonction `AircraftManager::move` (ou `update`), ajoutez les instructions permettant de réordonner les `aircrafts` dans l'ordre défini ci-dessus.
+
+```cpp
+std::sort(aircrafts.begin(), aircrafts.end(), [](const auto& a, const auto& b) {
+    if (a->has_terminal()) {
+        return true;
+    } else if (b->has_terminal()) {
+        return false;
+    } else {
+        return a->fuel < b->fuel;
+    }
+});
+```
 
 ### D - Réapprovisionnement 
 

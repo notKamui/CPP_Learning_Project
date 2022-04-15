@@ -90,11 +90,20 @@ void Aircraft::add_waypoint(const Waypoint& wp, const bool front)
 
 void Aircraft::move(float dt)
 {
+    if (is_circling() && !has_terminal())
+    {
+        auto new_waypoints = control.reserve_terminal(*this);
+        if (!new_waypoints.empty())
+        {
+            waypoints = std::move(new_waypoints);
+        }
+    }
     if (waypoints.empty())
     {
         if (serviced) {
             finished = true;
         }
+
         waypoints = control.get_instructions(*this);
     }
 
