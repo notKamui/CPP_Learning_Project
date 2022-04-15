@@ -191,9 +191,24 @@ Si ce n'est pas le cas, essayez de faire varier la constante `200`.
 \- l'avion est bientôt à court d'essence\
 \- l'avion n'est pas déjà reparti de l'aéroport.
 
+> On peut utiliser std::accumulate pour calculer la somme des éléments qu'on veut. Dans le cas
+> où l'élément n'est pas concerné, on peut ajouter 0 à l'accumulateur à la place.
+
+```cpp
+long AircraftManager::get_required_fuel() const
+{
+    return std::accumulate(aircrafts.begin(), aircrafts.end(), 0, [](long acc, const auto& aircraft) {
+        return acc + (!aircraft->serviced && aircraft->is_low_on_fuel() ? Aircraft::FUEL_THRESHOLD - aircraft->fuel : 0);
+    });
+}
+```
+
 3. Ajoutez deux attributs `fuel_stock` et `ordered_fuel` dans la classe `Airport`, que vous initialiserez à 0.\
 Ajoutez également un attribut `next_refill_time`, aussi initialisé à 0.\
 Enfin, faites en sorte que la classe `Airport` ait accès à votre `AircraftManager` de manière à pouvoir l'interroger.
+
+> Puisque je ne veux absolument pas donner l'ownership du manager à Airport, je ne passe
+> qu'une référence.
 
 4. Ajoutez une fonction `refill` à la classe `Aircraft`, prenant un paramètre `fuel_stock` par référence non-constante.
 Cette fonction rempliera le réservoir de l'avion en soustrayant ce dont il a besoin de `fuel_stock`.
@@ -203,24 +218,35 @@ Indiquez dans la console quel avion a été réapprovisionné ainsi que la quant
 5. Définissez maintenant une fonction `refill_aircraft_if_needed` dans la classe `Terminal`, prenant un paramètre `fuel_stock` par référence non-constante.
 Elle devra appeler la fonction `refill` sur l'avion actuellement au terminal, si celui-ci a vraiment besoin d'essence.  
 
-6. Modifiez la fonction `Airport::update`, afin de mettre-en-oeuvre les étapes suivantes.\
-\- Si `next_refill_time` vaut 0 :\
-    \* `fuel_stock` est incrémenté de la valeur de `ordered_fuel`.\
-    \* `ordered_fuel` est recalculé en utilisant le minimum entre `AircraftManager::get_required_fuel()` et `5'000` (il s'agit du volume du camion citerne qui livre le kérosène).\
-    \* `next_refill_time` est réinitialisé à `100`.\
-    \* La quantité d'essence reçue, la quantité d'essence en stock et la nouvelle quantité d'essence commandée sont affichées dans la console.\
-\- Sinon `next_refill_time` est décrémenté.\
-\- Chaque terminal réapprovisionne son avion s'il doit l'être.
+6. Modifiez la fonction `Airport::move`, afin de mettre-en-oeuvre les étapes suivantes.\
+   \- Si `next_refill_time` vaut 0 :\
+       \* `fuel_stock` est incrémenté de la valeur de `ordered_fuel`.\
+       \* `ordered_fuel` est recalculé en utilisant le minimum entre `AircraftManager::get_required_fuel()` et `5'000` (il s'agit du volume du camion citerne qui livre le kérosène).\
+       \* `next_refill_time` est réinitialisé à `100`.\
+       \* La quantité d'essence reçue, la quantité d'essence en stock et la nouvelle quantité d'essence commandée sont affichées dans la console.\
+   \- Sinon `next_refill_time` est décrémenté.\
+   \- Chaque terminal réapprovisionne son avion s'il doit l'être.
 
-### E - Paramétrage (optionnel)
+> Voire les classes concernées.
+
+### E - Déréservation
+
+Si vous avez suffisamment testé votre programme, vous avez dû vous apercevoir que parfois, certains terminaux arrêtaient d'être réservés et utilisés.\
+En effet, lorsque les avions se crashent alors qu'ils avaient un terminal de réservé, rien n'a été fait pour s'assurer que le terminal allait de nouveau être libre.
+
+Pour garantir cela, vous allez modifier le destructeur de `Aircraft`. Si l'avion a réservé un terminal, assurez-vous que celui-ci est correctement libéré. Pour cela, vous aurez besoin de rajouter une fonction dans la classe `Tower`. Choisissez-lui un nom qui décrit correctement ce qu'elle fait.
+
+> Je l'ai appelée release_terminal. D'autre part, j'ai dû ajouter une fonction Terminal::release.
+
+### F - Paramétrage (optionnel)
 
 Pour le moment, tous les avions ont la même consommation d'essence (1 unité / trame) et la même taille de réservoir (`3'000`).
 
 1. Arrangez-vous pour que ces deux valeurs soient maintenant déterminées par le type de chaque avion (`AircraftType`).
 
 2. Pondérez la consommation réelle de l'avion par sa vitesse courante.
-La consommation définie dans `AircraftType` ne s'appliquera que lorsque l'avion est à sa vitesse maximale.
+   La consommation définie dans `AircraftType` ne s'appliquera que lorsque l'avion est à sa vitesse maximale.
 
 3. Un avion indique qu'il a besoin d'essence lorsqu'il a moins de `200` unités.
-Remplacez cette valeur pour qu'elle corresponde à la quantité consommée en 10s à vitesse maximale.\
-Si vous n'avez pas fait la question bonus de TASK_0, notez bien que la fonction `update` de chaque avion devrait être appelée `DEFAULT_TICKS_PER_SEC` fois par seconde. 
+   Remplacez cette valeur pour qu'elle corresponde à la quantité consommée en 10s à vitesse maximale.\
+   Si vous n'avez pas fait la question bonus de TASK_0, notez bien que la fonction `move` de chaque avion devrait être appelée `DEFAULT_TICKS_PER_SEC` fois par seconde. 

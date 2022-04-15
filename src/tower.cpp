@@ -53,5 +53,17 @@ WaypointQueue Tower::reserve_terminal(Aircraft& aircraft)
 
 void Tower::arrived_at_terminal(const Aircraft& aircraft)
 {
-    airport.get_terminal(reserved_terminals[&aircraft]).start_service(aircraft);
+    auto t = reserved_terminals.find(&aircraft);
+    if (t == reserved_terminals.end()) return;
+    auto t_id = t->second;
+    airport.get_terminal(t_id).start_service(aircraft);
+}
+
+void Tower::release_terminal(const Aircraft &aircraft)
+{
+    auto t = reserved_terminals.find(&aircraft);
+    if (t == reserved_terminals.end()) return;
+    auto t_id = t->second;
+    airport.get_terminal(t_id).release();
+    reserved_terminals.erase(t);
 }

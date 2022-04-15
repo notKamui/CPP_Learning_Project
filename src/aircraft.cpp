@@ -76,16 +76,12 @@ void Aircraft::operate_landing_gear()
     }
 }
 
-void Aircraft::add_waypoint(const Waypoint& wp, const bool front)
+void Aircraft::refill(long &fuel_stock)
 {
-    if (front)
-    {
-        waypoints.push_front(wp);
-    }
-    else
-    {
-        waypoints.push_back(wp);
-    }
+    long needed = std::min(fuel_stock, FUEL_MAX - fuel);
+    fuel_stock -= needed;
+    fuel += needed;
+    if (needed != 0) std::cout << flight_number << " refilled for " << needed << " fuel units" << std::endl;
 }
 
 void Aircraft::move(float dt)
