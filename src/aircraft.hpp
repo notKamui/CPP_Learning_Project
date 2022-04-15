@@ -22,6 +22,7 @@ private:
     bool is_at_terminal        = false;
     bool serviced              = false;
     bool finished              = false;
+    int fuel                   = (rand() % (3001-150)) + 150; // random fuel between 150 and 3000
 
     // turn the aircraft to arrive at the next waypoint
     // try to facilitate reaching the waypoint after the next by facing the
@@ -61,6 +62,8 @@ public:
 
     const std::string& get_flight_num() const { return flight_number; }
     float distance_to(const Point3D& p) const { return pos.distance_to(p); }
+    bool has_terminal() const {return !waypoints.empty() && waypoints.back().is_at_terminal();}
+    bool is_circling() const {return !waypoints.empty() && waypoints.back().type == wp_circle;}
 
     void display() const override;
     void move(float) override;

@@ -10,7 +10,7 @@ WaypointQueue Tower::get_circle() const
     return { { Point3D { -1.5f, -1.5f, .5f }, wp_air },
              { Point3D { 1.5f, -1.5f, .5f }, wp_air },
              { Point3D { 1.5f, 1.5f, .5f }, wp_air },
-             { Point3D { -1.5f, 1.5f, .5f }, wp_air } };
+             { Point3D { -1.5f, 1.5f, .5f }, wp_circle } };
 }
 
 WaypointQueue Tower::get_instructions(Aircraft& aircraft)
@@ -55,6 +55,11 @@ WaypointQueue Tower::get_instructions(Aircraft& aircraft)
             return {};
         }
     }
+}
+
+WaypointQueue Tower::reserve_terminal(Aircraft& aircraft)
+{
+    return WaypointQueue();
 }
 
 void Tower::arrived_at_terminal(const Aircraft& aircraft)

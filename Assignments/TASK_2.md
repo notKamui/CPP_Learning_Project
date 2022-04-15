@@ -45,6 +45,32 @@ void AircraftManager::move(float dt)
 A cette fin, rajoutez des callbacks sur les touches `0`..`7` de manière à ce que le nombre d'avions appartenant à `airlines[x]` soit affiché en appuyant sur `x`.
 Rendez-vous compte de quelle classe peut acquérir cette information. Utilisez la bonne fonction de `<algorithm>` pour obtenir le résultat.
 
+> C'est la AircraftFactory qui connait ces informations. Pour compter, on peut utiliser count_if
+
+```cpp
+long AircraftFactory::count_aircraft_from_airline(unsigned int airline) const
+{
+    auto &line = airlines[airline];
+    return std::count_if(
+        used_flight_numbers.begin(),
+        used_flight_numbers.end(),
+        [line](const std::string &flight_number) {
+            return flight_number.rfind(line, 0) == 0;
+        });
+}
+```
+
+> Et dans TowerSimulation::create_keystrokes
+
+```cpp
+for (auto i = 0u; i < 8; ++i)
+{
+    GL::keystrokes.emplace(i + '0', [this, i]() {
+        std::cout << "Airline n°" << i << " has " << aircraft_factory.count_aircraft_from_airline(i) << " flights" << std::endl;
+    });
+}
+```
+
 ### C - Relooking de Point3D
 
 La classe `Point3D` présente beaucoup d'opportunités d'appliquer des algorithmes.
@@ -55,6 +81,8 @@ remplacez le code des fonctions suivantes en utilisant des fonctions de `<algori
 1. `Point3D::operator*=(const float scalar)`
 2. `Point3D::operator+=(const Point3D& other)` et `Point3D::operator-=(const Point3D& other)`
 3. `Point3D::length() const`
+
+> Voir Point3D
 
 ---
 
@@ -73,6 +101,9 @@ Lorsque cette valeur atteint 0, affichez un message dans la console pour indique
 
 N'hésitez pas à adapter la borne `150` - `3'000`, de manière à ce que des avions se crashent de temps en temps.
 
+> Dans Aircraft::move, dans la partie !is_on_ground, je décrémente le fuel, et s'il est 
+> inférieur ou égal à 0, je set le flag finished à true, ce qui fait que le manager va le supprimer de la queue.
+
 ### B - Un terminal s'il vous plaît
 
 Afin de minimiser les crashs, il va falloir changer la stratégie d'assignation des terminaux aux avions.
@@ -81,7 +112,10 @@ Si un terminal est libre, la tour lui donne le chemin pour l'atteindre, sinon, e
 Pour pouvoir prioriser les avions avec moins d'essence, il faudrait déjà que les avions tentent de réserver un terminal tant qu'ils n'en n'ont pas (au lieu de ne demander que lorsqu'ils ont terminé leur petit tour).
 
 1. Introduisez une fonction `bool Aircraft::has_terminal() const` qui indique si un terminal a déjà été réservé pour l'avion (vous pouvez vous servir du type de `waypoints.back()`).
+> `bool has_terminal() const {return !waypoints.empty() && waypoints.back().is_at_terminal();}`
 2. Ajoutez une fonction `bool Aircraft::is_circling() const` qui indique si l'avion attend qu'on lui assigne un terminal pour pouvoir attérir.
+> Pour déterminer qu'un avion attend, j'ai changé la fonction get_circle de Tower pour que le dernier point
+> soit d'un nouveau type wp_circle. De cette façon : `bool is_circling() const {return !waypoints.empty() && waypoints.back().type == wp_circle;}`
 3. Introduisez une fonction `WaypointQueue Tower::reserve_terminal(Aircraft& aircraft)` qui essaye de réserver un `Terminal`. Si c'est possible, alors elle retourne un chemin vers ce `Terminal`, et un chemin vide autrement (vous pouvez vous inspirer / réutiliser le code de `Tower::get_instructions`).
 4. Modifiez la fonction `move()` (ou bien `update()`) de `Aircraft` afin qu'elle appelle `Tower::reserve_terminal` si l'avion est en attente. Si vous ne voyez pas comment faire, vous pouvez essayer d'implémenter ces instructions :\
 \- si l'avion a terminé son service et sa course, alors on le supprime de l'aéroport (comme avant),\

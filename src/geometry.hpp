@@ -84,7 +84,7 @@ struct Point3D
         // x() += other.x();
         // y() += other.y();
         // z() += other.z();
-        std::transform(other.values.begin(), other.values.end(), values.begin(), values.begin(), [](float valueO, float valueS) -> float { return valueS + valueO; });
+        std::transform(values.begin(), values.end(), other.values.begin(), values.begin(), std::plus<>());
         return *this;
     }
 
@@ -93,7 +93,7 @@ struct Point3D
         // x() -= other.x();
         // y() -= other.y();
         // z() -= other.z();
-        std::transform(other.values.begin(), other.values.end(), values.begin(), values.begin(), [](float valueO, float valueS) -> float { return valueS - valueO; });
+        std::transform(values.begin(), values.end(), other.values.begin(), values.begin(), std::minus<>());
         return *this;
     }
 

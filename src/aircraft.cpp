@@ -134,6 +134,13 @@ void Aircraft::move(float dt)
             {
                 pos.z() -= SINK_FACTOR * (SPEED_THRESHOLD - speed_len);
             }
+
+            fuel--;
+            if (fuel <= 0)
+            {
+                std::cout << flight_number << " ran out of fuel" << std::endl;
+                finished = true;
+            }
         }
 
         // update the z-value of the displayable structure
