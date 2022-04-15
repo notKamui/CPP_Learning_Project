@@ -2,7 +2,7 @@
 
 ## Analyse de la gestion des avions
 
-La création des avions est aujourd'hui gérée par les fonctions `TowerSimulation::create_aircraft` et `TowerSimulation::create_random_aircraft`.
+La création des avions est aujourd'hui gérée par les fonctions `TowerSimulation::create_aircraft` et `TowerSimulation::add_aircraft`.
 Chaque avion créé est ensuite placé dans les files `GL::display_queue` et `GL::move_queue`.
 
 Si à un moment quelconque du programme, vous souhaitiez accéder à l'avion ayant le numéro de vol "AF1250", que devriez-vous faire ?
@@ -76,13 +76,13 @@ Testez que le programme fonctionne toujours.
 
 La création des avions est faite à partir des composants suivants :
 - `create_aircraft`
-- `create_random_aircraft`
+- `add_aircraft`
 - `airlines`
 - `aircraft_types`.
 
 Pour éviter l'usage de variables globales, vous allez créer une classe `AircraftFactory` dont le rôle est de créer des avions.
 
-Définissez cette classe, instanciez-là en tant que membre de `TowerSimulation` et refactorisez-le code pour l'utiliser.
+Définissez cette classe, instanciez-la en tant que membre de `TowerSimulation` et refactorisez-le code pour l'utiliser.
 Vous devriez constater que le programme crashe.
 
 En effet, pour que la factory fonctionne, il faut que le `MediaPath` (avec la fonction `MediaPath::initialize`) et que `glut` (avec la fonction `init_gl()`) aient été initialisés.
@@ -96,13 +96,22 @@ A quelle ligne faut-il définir `context_initializer` dans `TowerSimulation` pou
 Refactorisez le restant du code pour utiliser votre factory.
 Vous devriez du coup pouvoir supprimer les variables globales `airlines` et `aircraft_types`.
 
+> Honnêtement, cette classe aurait dûe avoir des fonctions membres statiques et aucun de ces problèmes ne seraient apparus.
+> Ces solutions absolument ***dégueulasses*** n'auraient pas été nécessaires.
+
 ### B - Conflits
 
 Il est rare, mais possible, que deux avions soient créés avec le même numéro de vol.
 Ajoutez un conteneur dans votre classe `AircraftFactory` contenant tous les numéros de vol déjà utilisés.
 Faites maintenant en sorte qu'il ne soit plus possible de créer deux fois un avion avec le même numéro de vol.
 
+> J'ai fait un champs `std::set<std::string> used_flight_numbers` dans la classe `AircraftFactory`.
+> Lorsqu'on crée un avion, on vérifie si le numéro de vol n'est pas déjà présent dans le conteneur.
+> Si c'est le cas, on régénère son numéro de vol jusqu'a ce qu'il soit valide.
+
 ### C - Data-driven AircraftType (optionnel)
+
+> Pas fait
 
 On aimerait pouvoir charger les paramètres des avions depuis un fichier.
 
@@ -119,6 +128,8 @@ Si vous voulez de nouveaux sprites, vous pouvez en trouver sur [cette page](http
 ---
 
 ## Objectif 3 - Pool de textures (optionnel)
+
+> Pas fait
 
 Pour le moment, chacun des `AircraftType` contient et charge ses propres sprites.
 On pourrait néanmoins avoir différents `AircraftType` qui utilisent les mêmes sprites.
