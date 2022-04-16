@@ -128,7 +128,7 @@ void Aircraft::move(float dt)
             if (!landing_gear_deployed)
             {
                 using namespace std::string_literals;
-                throw AircraftCrash { flight_number + " crashed into the ground"s };
+                throw AircraftCrash { flight_number, pos, speed, AircraftCrash::Reason::BAD_LANDING };
             }
         }
         else
@@ -143,8 +143,8 @@ void Aircraft::move(float dt)
             fuel--;
             if (fuel <= 0)
             {
-                std::cout << flight_number << " ran out of fuel" << std::endl;
-                finished = true;
+                using namespace std::string_literals;
+                throw AircraftCrash { flight_number, pos, speed, AircraftCrash::Reason::OUT_OF_FUEL };
             }
         }
 

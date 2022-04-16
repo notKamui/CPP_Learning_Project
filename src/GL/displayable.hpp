@@ -1,7 +1,8 @@
 #pragma once
 
-#include <vector>
 #include <algorithm>
+#include <cassert>
+#include <vector>
 
 namespace GL {
 
@@ -34,6 +35,7 @@ struct disp_z_cmp
 {
     bool operator()(const Displayable* a, const Displayable* b) const
     {
+        assert(a != nullptr && b != nullptr);
         const auto az = a->get_z();
         const auto bz = b->get_z();
         return (az == bz) ? (a > b) : (az > bz);

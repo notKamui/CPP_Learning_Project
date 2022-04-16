@@ -160,6 +160,12 @@ struct Point3D
 
         return *this;
     }
+
+    const std::string s() const {
+        using namespace std::string_literals;
+        auto s = "[" + std::to_string(x()) + ", " + std::to_string(y()) + ", " + std::to_string(z()) + "]";
+        return s;
+    }
 };
 
 // our 3D-coordinate system will be tied to the airport: the runway is parallel to the x-axis, the z-axis

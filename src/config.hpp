@@ -3,6 +3,7 @@
 #include "img/media_path.hpp"
 
 #include <stdexcept>
+#include "geometry.hpp"
 
 const MediaPath one_lane_airport_sprite_path = { "airport_1lane.png" };
 const MediaPath two_lane_airport_sprite_path = { "airport_2lane.png" };
@@ -28,4 +29,44 @@ constexpr float DEFAULT_ZOOM = 2.0f;
 constexpr size_t DEFAULT_WINDOW_WIDTH  = 800;
 constexpr size_t DEFAULT_WINDOW_HEIGHT = 600;
 
-using AircraftCrash = std::runtime_error;
+//using AircraftCrash = std::runtime_error;
+
+class AircraftCrash : public std::runtime_error
+{
+public:
+    enum Reason { OUT_OF_FUEL, BAD_LANDING };
+
+    AircraftCrash(
+        const std::string& flight_number_,
+        const Point3D& position_,
+        const Point3D& speed_,
+        const Reason reason_
+    ) : std::runtime_error(get_message(flight_number_, position_, speed_, reason_)) {}
+
+private:
+    static std::string get_message(
+        const std::string& flight_number,
+        const Point3D& position,
+        const Point3D& speed,
+        const Reason reason
+    ) {
+        using namespace std::string_literals;
+        auto msg = flight_number;
+        msg += " crashed at "s + position.s() + " with speed "s + speed.s();
+        msg += " ("s + reason_to_string(reason) + ")"s;
+        return msg;
+    }
+
+    static std::string reason_to_string(const Reason reason)
+    {
+        switch (reason)
+        {
+            case OUT_OF_FUEL:
+                return "out of fuel";
+            case BAD_LANDING:
+                return "bad landing";
+            default:
+                return "unknown reason";
+        }
+    }
+};

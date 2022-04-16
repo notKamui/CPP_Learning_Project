@@ -42,6 +42,7 @@ void TowerSimulation::create_keystrokes()
     GL::keystrokes.emplace('e', []() { GL::simulation_speed -= .1f; std::max(GL::simulation_speed, 0.0f); }); // speed--
     GL::keystrokes.emplace('r', []() { GL::simulation_speed += .1f; }); // speed++
     GL::keystrokes.emplace('p', []() { GL::paused = !GL::paused; });
+    GL::keystrokes.emplace('m', [this]() { std::cout << aircraft_manager.get_n_crashed_aircrafts() << " aircraft(s) crashed in total" << std::endl; });
 
     for (auto i = 0u; i < 8; ++i)
     {
@@ -66,6 +67,7 @@ void TowerSimulation::display_help() const
 
 void TowerSimulation::init_airport()
 {
+    assert(airport == nullptr);
     airport = new Airport { aircraft_manager, one_lane_airport, Point3D { 0, 0, 0 },
                             new img::Image { one_lane_airport_sprite_path.get_full_path() } };
 
@@ -82,5 +84,6 @@ void TowerSimulation::launch()
     }
 
     init_airport();
+    assert(airport != nullptr);
     GL::loop();
 }
