@@ -17,7 +17,7 @@ struct Point
 
     template<typename... Ts>
     explicit Point(Ts&&... args)
-        : values { static_cast<T>(args)...}
+        : values { std::forward<T>(static_cast<T>(args))...}
     {
         static_assert(sizeof...(Ts) == dim, "dim must match the number of arguments");
     }

@@ -83,5 +83,5 @@ p1 *= 3; // ou 3.f, ou 3.0 en fonction du type de Point
 
 8. **BONUS** En utilisant SFINAE, faites en sorte que le template `Point` ne puisse être instancié qu'avec des types [arithmétiques](https://en.cppreference.com/w/cpp/types/is_arithmetic).
 
-> Sur le constructeur générique : `template<typename... Ts, typename std::enable_if<std::is_arithmetic_v<T>, bool>::type>`.
+> Sur le champs values : `std::array<std::enable_if_t<std::is_arithmetic_v<T>, T>, dim> values;`.
 > On enable ssi le type T est arithmétique.
