@@ -18,7 +18,7 @@
 
 namespace GL {
 
-inline int last_tick = glutGet(GLUT_ELAPSED_TIME);
+inline int last_tick = 0;
 inline unsigned int ticks_per_sec = DEFAULT_TICKS_PER_SEC;
 inline float simulation_speed = 1.0f;
 inline unsigned int DEFAULT_FRAMERATE = 1000 / DEFAULT_TICKS_PER_SEC;

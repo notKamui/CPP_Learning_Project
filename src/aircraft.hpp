@@ -49,7 +49,10 @@ private:
     Aircraft(const Aircraft&) = delete;
     Aircraft& operator=(const Aircraft&) = delete;
 
+    template <bool front>
+    void add_waypoint(const Waypoint& wp);
 public:
+
     Aircraft(const AircraftType& type_, const std::string_view& flight_number_, const Point3D& pos_,
              const Point3D& speed_, Tower& control_) :
         GL::Displayable { pos_.x() + pos_.y() },
@@ -65,18 +68,17 @@ public:
     ~Aircraft() {
         control.release_terminal(*this);
     }
-
     const std::string& get_flight_num() const { return flight_number; }
     float distance_to(const Point3D& p) const { return pos.distance_to(p); }
     bool has_terminal() const {return !waypoints.empty() && waypoints.back().is_at_terminal();}
     bool is_circling() const {return !waypoints.empty() && waypoints.back().type == wp_circle;}
+
     bool is_low_on_fuel() const {return fuel < FUEL_THRESHOLD;}
 
     void refill(long &fuel_stock);
-
     void display() const override;
-    void move(float) override;
 
+    void move(float) override;
     friend class Tower;
     friend class AircraftManager;
 };

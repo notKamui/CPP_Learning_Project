@@ -8,6 +8,7 @@ void AircraftManager::add(std::unique_ptr<Aircraft>& aircraft)
 
 void AircraftManager::move(float dt)
 {
+    assert(dt >= 0.0f);
     std::sort(aircrafts.begin(), aircrafts.end(), [](const auto& a, const auto& b) {
         if (a->has_terminal() && !b->has_terminal()) return true;
         if (b->has_terminal() && !a->has_terminal()) return false;

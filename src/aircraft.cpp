@@ -84,14 +84,32 @@ void Aircraft::refill(long &fuel_stock)
     if (needed != 0) std::cout << flight_number << " refilled for " << needed << " fuel units" << std::endl;
 }
 
+template <bool front>
+void Aircraft::add_waypoint(const Waypoint& wp)
+{
+    if constexpr (front)
+    {
+        waypoints.push_front(wp);
+    }
+    else
+    {
+        waypoints.push_back(wp);
+    }
+}
+
 void Aircraft::move(float dt)
 {
+    assert(dt >= 0.0f);
     if (is_circling() && !has_terminal())
     {
         auto new_waypoints = control.reserve_terminal(*this);
         if (!new_waypoints.empty())
         {
-            waypoints = std::move(new_waypoints);
+            waypoints.clear();
+            for (const auto& wp: new_waypoints)
+            {
+                add_waypoint<false>(wp);
+            }
         }
     }
     if (waypoints.empty())
@@ -100,7 +118,11 @@ void Aircraft::move(float dt)
             finished = true;
         }
 
-        waypoints = control.get_instructions(*this);
+        //waypoints = control.get_instructions(*this);
+        for (const auto& wp: control.get_instructions(*this))
+        {
+            add_waypoint<false>(wp);
+        }
     }
 
     if (!is_at_terminal)

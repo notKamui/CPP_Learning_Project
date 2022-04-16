@@ -23,6 +23,9 @@ for (const auto& wp: control.get_instructions(*this))
 2. Modifiez `Aircraft::add_waypoint` afin que l'évaluation du flag ait lieu à la compilation et non à l'exécution.
    Que devez-vous changer dans l'appel de la fonction pour que le programme compile ?
 
+> Aircraft::add_waypoint ne reçoit plus de booléen en paramètre direct, mais cette fois ci en tant
+> que template parameter, faisant de lui un constexpr, que l'on peut utiliser dans un if constexpr.
+
 3. **BONUS** En utilisant [GodBolt](https://godbolt.org/), comparez le code-assembleur généré par les fonctions suivantes:
 <table border="0">
  <tr>
@@ -61,9 +64,14 @@ p1 *= 3; // ou 3.f, ou 3.0 en fonction du type de Point
 
 4. Dans la fonction `test_generic_points`, essayez d'instancier un `Point2D` avec 3 arguments.
    Que se passe-t-il ?
+   > Ca ne compile plus
+
    Comment pourriez-vous expliquer que cette erreur ne se produise que maintenant ?
+   > Puisque Point2D, son template param est bien 2, or il n'y a pas de constructeurs à 3 paramètre qui y correspond.
 
 5. Que se passe-t-il maintenant si vous essayez d'instancier un `Point3D` avec 2 arguments ?
+   > Ca compile mais on ne voudrait pas que cela soit le cas.
+
    Utilisez un `static_assert` afin de vous assurez que personne ne puisse initialiser un `Point3D` avec seulement deux éléments.
    Faites en de même dans les fonctions `y()` et `z()`, pour vérifier que l'on ne puisse pas les appeler sur des `Point` qui n'ont pas la dimension minimale requise.
 
@@ -71,5 +79,9 @@ p1 *= 3; // ou 3.f, ou 3.0 en fonction du type de Point
    Vous conserverez bien entendu le `static_assert` pour vérifier que le nombre d'arguments passés correspond bien à la dimension du `Point`.\
    En faisant ça, vous aurez peut-être désormais des problèmes avec la copie des `Point`.
    Que pouvez-vous faire pour supprimer l'ambiguité ?
+   > Il suffit de déclarer le constructeur comme étant explicit
 
-7. **BONUS** En utilisant SFINAE, faites en sorte que le template `Point` ne puisse être instancié qu'avec des types [arithmétiques](https://en.cppreference.com/w/cpp/types/is_arithmetic).
+8. **BONUS** En utilisant SFINAE, faites en sorte que le template `Point` ne puisse être instancié qu'avec des types [arithmétiques](https://en.cppreference.com/w/cpp/types/is_arithmetic).
+
+> Sur le constructeur générique : `template<typename... Ts, typename std::enable_if<std::is_arithmetic_v<T>, bool>::type>`.
+> On enable ssi le type T est arithmétique.

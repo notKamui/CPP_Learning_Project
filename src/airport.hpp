@@ -73,7 +73,6 @@ public:
 
     void move(float dt) override
     {
-        assert(dt > 0.0f);
         if (next_refill_time == 0)
         {
             fuel_stock += ordered_fuel;

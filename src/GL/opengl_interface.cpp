@@ -73,10 +73,11 @@ void display(void)
 
 void timer(const int step)
 {
-    float framerate = (float) DEFAULT_FRAMERATE / simulation_speed;
+    float framerate = simulation_speed / ((float) DEFAULT_FRAMERATE);
     int now = glutGet(GLUT_ELAPSED_TIME);
-    float dt = (float)(now - last_tick) / framerate;
+    float dt = (float)(now - last_tick) * framerate;
     last_tick = now;
+    assert(dt >= 0.0f);
     if (!paused)
     {
         for (auto& dObj : move_queue)
