@@ -69,7 +69,7 @@ public:
 
     Tower& get_tower() { return tower; }
 
-    void display() const override { texture.draw(project_2D(pos), { 2.0f, 2.0f }); }
+    void display() const override { texture.draw(project_2D(pos), Point2D { 2.0f, 2.0f }); }
 
     void move(float dt) override
     {

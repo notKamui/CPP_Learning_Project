@@ -177,5 +177,5 @@ void Aircraft::move(float dt)
 
 void Aircraft::display() const
 {
-    type.texture.draw(project_2D(pos), { PLANE_TEXTURE_DIM, PLANE_TEXTURE_DIM }, get_speed_octant());
+    type.texture.draw(project_2D(pos), Point2D { PLANE_TEXTURE_DIM, PLANE_TEXTURE_DIM }, get_speed_octant());
 }

@@ -11,26 +11,25 @@
 template <typename T, size_t dim>
 struct Point
 {
-    std::array<T, dim> values;
+    std::array<std::enable_if_t<std::is_arithmetic_v<T>, T>, dim> values;
 
-    Point() {}
+    Point() {};
 
-    Point(float x, float y) : values { x, y } {
+    template<typename... Ts>
+    explicit Point(Ts&&... args)
+        : values { static_cast<T>(args)...}
+    {
+        static_assert(sizeof...(Ts) == dim, "dim must match the number of arguments");
+    }
+
+    /*Point(float x, float y) : values { x, y } {
         static_assert(dim == 2, "dim must be 2");
+        std::cout << "Point(float x, float y)" << std::endl;
     }
 
     Point(float x, float y, float z) : values { x, y, z } {
         static_assert(dim == 3, "dim must be 3");
-    }
-
-    template<
-        typename... Ts,
-        typename std::enable_if<std::is_arithmetic_v<T>, bool>::type,
-        typename std::enable_if<sizeof...(Ts) != 2 && sizeof...(Ts) != 3 && !std::is_floating_point_v<T>, bool>::type
-    >
-    explicit Point(Ts&&... args) : values {static_cast<T>(args)...} {
-        static_assert(sizeof...(Ts) == dim, "dim must match the number of arguments");
-    }
+    }*/
 
     float& x() {
         static_assert(dim >= 1);
@@ -150,7 +149,14 @@ struct Point
     }
 
     const std::string s() const {
-        return std::string(values.begin(), values.end());
+        std::string s = "[";
+        for (size_t i = 0; i < dim; ++i) {
+            s += std::to_string(values[i]);
+            if (i < dim - 1) {
+                s += ", ";
+            }
+        }
+        return s + "]";
     }
 };
 
@@ -162,5 +168,5 @@ using Point3D = Point<float, 3>;
 // {1,0,0} --> {.5,.5}   {0,1,0} --> {-.5,.5}   {0,0,1} --> {0,1}
 inline Point2D project_2D(const Point3D& p)
 {
-    return { .5f * p.x() - .5f * p.y(), .5f * p.x() + .5f * p.y() + p.z() };
+    return Point2D { .5f * p.x() - .5f * p.y(), .5f * p.x() + .5f * p.y() + p.z() };
 }
