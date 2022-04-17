@@ -5,11 +5,19 @@
 Compilez et lancez le programme.
 
 Allez dans le fichier `tower_sim.cpp` et recherchez la fonction responsable de gérer les inputs du programme.
+> void TowerSimulation::create_keystrokes() const
+
 Sur quelle touche faut-il appuyer pour ajouter un avion ?
+> La touche 'c' crée un avion
+
 Comment faire pour quitter le programme ?
+> Les touches 'x' et 'q' quittent le programme
+
 A quoi sert la touche 'F' ?
+> La touche 'f' met l'application en plein écran (fullscreen)
 
 Ajoutez un avion à la simulation et attendez.
+
 Que est le comportement de l'avion ?
 > L'avion atterri et tente d'aller en service pendant un moment, avant de finir et de redécoller, tout cela en boucle
 
@@ -55,8 +63,11 @@ Le Concorde est censé pouvoir voler plus vite que les autres avions.
 Modifiez le programme pour tenir compte de cela.
 > Voir aircraft_types.hpp
 
+
 2) Identifiez quelle variable contrôle le framerate de la simulation.
 > GL::ticks_per_sec
+
+Le framerate correspond au temps de rafraichissement du programme, c'est-à-dire le nombre de fois où les éléments du programme seront mis à jour (ajout de nouvel avion à la simulation, déplacement, etc) en une seconde.\
 
 Ajoutez deux nouveaux inputs au programme permettant d'augmenter ou de diminuer cette valeur.
 > a: fps-- ; z: fps++
@@ -71,7 +82,8 @@ Ajoutez une nouvelle fonctionnalité au programme pour mettre le programme en pa
 > config.hpp -> SERVICE_CYCLES
 
 4) Lorsqu'un avion a décollé, il réattérit peu de temps après.
-Faites en sorte qu'à la place, il soit retiré du programme.\
+Assurez-vous qu'à la place, il soit supprimé de la `move_queue`.\
+Pour tester, il suffit de dézoomer et de vérifier que les avions suffisament éloignés ne bougent plus.
 Indices :\
 A quel endroit pouvez-vous savoir que l'avion doit être supprimé ?\
 > Dans Tower::get_instruction
@@ -108,8 +120,9 @@ for (auto it = move_queue.begin(); it != move_queue.end();)
 
 5) Lorsqu'un objet de type `Displayable` est créé, il faut ajouter celui-ci manuellement dans la liste des objets à afficher.
 Il faut également penser à le supprimer de cette liste avant de le détruire.
-Faites en sorte que l'ajout et la suppression de `display_queue` soit "automatiquement gérée" lorsqu'un `Displayable` est créé ou détruit.
-Pourquoi n'est-il pas spécialement pertinent d'en faire de même pour `DynamicObject` ?
+Faites en sorte que l'ajout et la suppression de `display_queue` soit "automatiquement gérée" lorsqu'un `Displayable` est créé ou détruit.\
+Essayez maintenant de supprimer complètement l'avion du programme lorsque vous le retirez de la `move_queue`.\
+En dézoomant, vous devriez maintenant constater que les avions disparaissent maintenant de l'écran.
 
 > Voir le constructeur et destructeur de Displayable.
 > D'autre part, on ne sait pas si un DynamicObject doit forcément

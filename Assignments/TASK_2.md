@@ -15,13 +15,14 @@ for (const auto& [first, _] : GL::keystrokes)
 ```
 > second est ignoré puisque l'on n'en a pas besoin.
 
+
 ### B - Algorithmes divers
 
-1. `AircraftManager::move()` (ou bien `update()`) supprime les avions de la `move_queue` dès qu'ils sont "hors jeux".
+1. `AircraftManager::move()` supprime les avions de la `move_queue` dès qu'ils sont "hors jeux".
 En pratique, il y a des opportunités pour des pièges ici. Pour les éviter, `<algorithm>` met à disposition la fonction `std::remove_if`.
 Remplacez votre boucle avec un appel à `std::remove_if`.
 
-**Attention**: pour cela c'est necessaire que `AircraftManager` stocke les avion dans un `std::vector` ou `std::list` (c'est déjà le cas pour la solution filé).
+**Attention**: pour cela, il est nécessaire que `AircraftManager` stocke les avion dans un `std::vector` ou `std::list`.
 
 ```cpp
 void AircraftManager::move(float dt)
@@ -74,7 +75,7 @@ for (auto i = 0u; i < 8; ++i)
 ### C - Relooking de Point3D
 
 La classe `Point3D` présente beaucoup d'opportunités d'appliquer des algorithmes.
-Particulairement, des formulations de type `x() = ...; y() = ...; z() = ...;` se remplacent par un seul appel à la bonne fonction de la librairie standard.
+Particulièrement, des formulations de type `x() = ...; y() = ...; z() = ...;` se remplacent par un seul appel à la bonne fonction de la librairie standard.
 Remplacez le tableau `Point3D::values` par un `std::array` et puis,
 remplacez le code des fonctions suivantes en utilisant des fonctions de `<algorithm>` / `<numeric>`:
 
@@ -89,14 +90,14 @@ remplacez le code des fonctions suivantes en utilisant des fonctions de `<algori
 ## Objectif 2 - Rupture de kérosène
 
 Vous allez introduire la gestion de l'essence dans votre simulation.\
-Comme le but de ce TP est de vous apprendre à manipuler les algorithmes de la STL, avant d'écrire une boucle, demandez-vous du coup s'il n'existe pas une fonction d'`<algorithm>` ou de `<numeric>` qui permet de faire la même chose.
+Comme le but de ce TP est de vous apprendre à manipuler les algorithmes de la STL, avant d'écrire une boucle, demandez-vous s'il n'existe pas une fonction d'`<algorithm>` ou de `<numeric>` qui permet de faire la même chose.
 
 La notation tiendra compte de votre utilisation judicieuse de la librairie standard. 
 
 ### A - Consommation d'essence
 
 Ajoutez un attribut `fuel` à `Aircraft`, et initialisez-le à la création de chaque avion avec une valeur aléatoire comprise entre `150` et `3'000`.\
-Décrémentez cette valeur dans `Aircraft::update` si l'avion est en vol.\
+Décrémentez cette valeur dans `Aircraft::move` si l'avion est en vol.\
 Lorsque cette valeur atteint 0, affichez un message dans la console pour indiquer le crash, et faites en sorte que l'avion soit supprimé du manager.
 
 N'hésitez pas à adapter la borne `150` - `3'000`, de manière à ce que des avions se crashent de temps en temps.
@@ -117,7 +118,7 @@ Pour pouvoir prioriser les avions avec moins d'essence, il faudrait déjà que l
 > Pour déterminer qu'un avion attend, j'ai changé la fonction get_circle de Tower pour que le dernier point
 > soit d'un nouveau type wp_circle. De cette façon : `bool is_circling() const {return !waypoints.empty() && waypoints.back().type == wp_circle;}`
 3. Introduisez une fonction `WaypointQueue Tower::reserve_terminal(Aircraft& aircraft)` qui essaye de réserver un `Terminal`. Si c'est possible, alors elle retourne un chemin vers ce `Terminal`, et un chemin vide autrement (vous pouvez vous inspirer / réutiliser le code de `Tower::get_instructions`).
-4. Modifiez la fonction `move()` (ou bien `update()`) de `Aircraft` afin qu'elle appelle `Tower::reserve_terminal` si l'avion est en attente. Si vous ne voyez pas comment faire, vous pouvez essayer d'implémenter ces instructions :\
+4. Modifiez la fonction `move()` de `Aircraft` afin qu'elle appelle `Tower::reserve_terminal` si l'avion est en attente. Si vous ne voyez pas comment faire, vous pouvez essayer d'implémenter ces instructions :\
 \- si l'avion a terminé son service et sa course, alors on le supprime de l'aéroport (comme avant),\
 \- si l'avion attend qu'on lui assigne un terminal, on appelle `Tower::reserve_terminal` et on modifie ses `waypoints` si le terminal a effectivement pu être réservé,\
 \- si l'avion a terminé sa course actuelle, on appelle `Tower::get_instructions` (comme avant).
@@ -138,7 +139,7 @@ if (is_circling() && !has_terminal())
 
 ### C - Minimiser les crashs
 
-Grâce au changement précédent, dès lors qu'un terminal est libéré, il sera réservé lors du premier appel à `Aircraft::update` d'un avion recherchant un terminal.
+Grâce au changement précédent, dès lors qu'un terminal est libéré, il sera réservé lors du premier appel à `Aircraft::move` d'un avion recherchant un terminal.
 Pour vous assurez que les terminaux seront réservés par les avions avec le moins d'essence, vous allez donc réordonner la liste des `aircrafts` avant de les mettre à jour.
 
 Vous devrez placer au début de la liste les avions qui ont déjà réservé un terminal.\
@@ -164,7 +165,7 @@ C - NotReserved / Fuel: 300
 ```
 
 Assurez-vous déjà que le conteneur `AircraftManager::aircrafts` soit ordonnable (`vector`, `list`, etc).\
-Au début de la fonction `AircraftManager::move` (ou `update`), ajoutez les instructions permettant de réordonner les `aircrafts` dans l'ordre défini ci-dessus.
+Au début de la fonction `AircraftManager::move`, ajoutez les instructions permettant de réordonner les `aircrafts` dans l'ordre défini ci-dessus.
 
 ```cpp
 std::sort(aircrafts.begin(), aircrafts.end(), [](const auto& a, const auto& b) {
@@ -219,6 +220,7 @@ Indiquez dans la console quel avion a été réapprovisionné ainsi que la quant
 Elle devra appeler la fonction `refill` sur l'avion actuellement au terminal, si celui-ci a vraiment besoin d'essence.  
 
 6. Modifiez la fonction `Airport::move`, afin de mettre-en-oeuvre les étapes suivantes.\
+
    \- Si `next_refill_time` vaut 0 :\
        \* `fuel_stock` est incrémenté de la valeur de `ordered_fuel`.\
        \* `ordered_fuel` est recalculé en utilisant le minimum entre `AircraftManager::get_required_fuel()` et `5'000` (il s'agit du volume du camion citerne qui livre le kérosène).\
