@@ -73,12 +73,20 @@ void display(void)
 
 void timer(const int step)
 {
-    for (auto& item : move_queue)
+    float framerate = simulation_speed / ((float) DEFAULT_FRAMERATE);
+    int now = glutGet(GLUT_ELAPSED_TIME);
+    float dt = (float)(now - last_tick) * framerate;
+    last_tick = now;
+    assert(dt >= 0.0f);
+    if (!paused)
     {
-        item->move();
+        for (auto& dObj : move_queue)
+        {
+            dObj->move(dt);
+        }
     }
     glutPostRedisplay();
-    glutTimerFunc(1000u / ticks_per_sec, timer, step + 1);
+    glutTimerFunc(1000 / ticks_per_sec, timer, step + 1);
 }
 
 void init_gl(int argc, char** argv, const char* title)

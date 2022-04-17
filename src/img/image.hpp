@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../config.hpp"
+#include "media_path.hpp"
 #include "stb_image.h"
 
-#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -18,7 +18,7 @@ private:
     unsigned int pixel_size = 0u;
 
 public:
-    Image(const std::filesystem::path& filepath)
+    Image(const Path& filepath)
     {
         int w = 0;
         int h = 0;

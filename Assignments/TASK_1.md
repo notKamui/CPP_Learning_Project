@@ -2,10 +2,15 @@
 
 ## Analyse de la gestion des avions
 
-La création des avions est aujourd'hui gérée par les fonctions `TowerSimulation::create_aircraft` et `TowerSimulation::create_random_aircraft`.
+La création des avions est aujourd'hui gérée par les fonctions `TowerSimulation::create_aircraft` et `TowerSimulation::add_aircraft`.
 Chaque avion créé est ensuite placé dans les files `GL::display_queue` et `GL::move_queue`.
 
 Imaginez et décrivez ce que vous devriez faire si vous souhaitiez accéder à l'avion ayant le numéro de vol "AF1250".
+
+> Actuellement, c'est très peu pratique : il faudrait parcourir la move_queue et y trouver les instances
+> d'aircraft, puis parmis elles, trouver celle qui a le numéro de vol "AF1250".
+> C'est très sale et dangereux d'un point de vue encapsulation et responsabilité. Ça ne
+> respecte pas le principe SOLID.
 
 ---
 
@@ -20,6 +25,8 @@ Vous avez 2 choix possibles :
 - donner ce rôle à une classe existante.
 
 Réfléchissez aux pour et contre de chacune de ces options.
+> Il serait possible de gérer ça dans TowerSimulation, mais c'est une classe qui possède déjà
+> beaucoup de responsabilités qui devraient être déléguées.
 
 Pour le restant de l'exercice, vous partirez sur le premier choix.
 
@@ -30,8 +37,17 @@ Il serait donc bon de savoir qui est censé détruire les avions du programme, a
 
 Répondez aux questions suivantes :
 1. Qui est responsable de détruire les avions du programme ? (si vous ne trouvez pas, faites/continuez la question 4 dans TASK_0)
-2. Quelles sont les listes qui contiennent une référence sur un avion au moment où il doit être détruit ?
-3. Comment fait-on pour supprimer la référence sur un avion qui va être détruit dans ces deux structures ?
+
+> c'est la fonction timer dans opengl_interface
+2. Quelles autres structures contiennent une référence sur un avion au moment où il doit être détruit ?
+> GL::display_queue et GL::move_queue
+3. Comment fait-on pour supprimer la référence sur un avion qui va être détruit dans ces structures ?
+> Dans la move_queue, on la retire "à la main" avec un parcours au moment d'effectuer les moves.
+> Dans la display_queue, c'est la class Displayable qui s'en occupe elle-même a sa destruction
+4. Pourquoi n'est-il pas très judicieux d'essayer d'appliquer la même chose pour votre `AircraftManager` ?
+> Si on essaie d'appliquer le même principe, on garderai des références sur les cases de notre structure,
+> ce qui risquerai d'emmener à la perte de cette référence, et donc à des accès sur des nullptr.
+
 
 Pour simplifier le programme, l'`AircraftManager` aura l'ownership des avions, c'est-à-dire que c'est lui qui s'occupera de les faire disparaître du programme, et non plus la fonction `timer`. Il aura également la responsabilité de les faire bouger.
 
@@ -39,6 +55,9 @@ Pour simplifier le programme, l'`AircraftManager` aura l'ownership des avions, c
 
 Ajoutez un attribut `aircrafts` dans le gestionnaire d'avions.
 Choisissez un type qui met bien en avant le fait que `AircraftManager` est propriétaire des avions, et vérifiez avec votre chargé de TP qu'il s'agit de la bonne solution.
+
+> `std::vector<std::unique_ptr<Aircraft>>` ; on utilise unique_ptr pour garantir que c'est bien
+> cette structure qui est propriétaire des avions.
 
 Ajoutez un nouvel attribut `aircraft_manager` dans la classe `TowerSimulation`.
 
@@ -59,13 +78,13 @@ Testez que le programme fonctionne toujours.
 
 La création des avions est faite à partir des composants suivants :
 - `create_aircraft`
-- `create_random_aircraft`
+- `add_aircraft`
 - `airlines`
 - `aircraft_types`.
 
 Pour éviter l'usage de variables globales, vous allez créer une classe `AircraftFactory` dont le rôle est de créer des avions.
 
-Définissez cette classe, instanciez-là en tant que membre de `TowerSimulation` et refactorisez-le code pour l'utiliser.
+Définissez cette classe, instanciez-la en tant que membre de `TowerSimulation` et refactorisez-le code pour l'utiliser.
 Vous devriez constater que le programme crashe.
 
 En effet, pour que la factory fonctionne, il faut que le `MediaPath` (avec la fonction `MediaPath::initialize`) et que `glut` (avec la fonction `init_gl()`) aient été initialisés.
@@ -79,7 +98,8 @@ A quelle ligne faut-il définir `context_initializer` dans `TowerSimulation` pou
 Refactorisez le restant du code pour utiliser votre factory.
 Vous devriez du coup pouvoir supprimer les variables globales `airlines` et `aircraft_types`.
 
-Essayez de supprimer au maximum les pointeurs nus, et de les remplacer par des types qui permettent d'exprimer clairement l'ownership. N'hésitez pas à demander des conseils à votre chargé de TP ou à vos camarades.
+> Honnêtement, cette classe aurait dûe avoir des fonctions membres statiques et aucun de ces problèmes ne seraient apparus.
+> Ces solutions absolument ***dégueulasses*** n'auraient pas été nécessaires.
 
 ### B - Conflits
 
@@ -87,7 +107,13 @@ Il est rare, mais possible, que deux avions soient créés avec le même numéro
 Ajoutez un conteneur dans votre classe `AircraftFactory` contenant tous les numéros de vol déjà utilisés.
 Faites maintenant en sorte qu'il ne soit plus possible de créer deux fois un avion avec le même numéro de vol.
 
+> J'ai fait un champs `std::set<std::string> used_flight_numbers` dans la classe `AircraftFactory`.
+> Lorsqu'on crée un avion, on vérifie si le numéro de vol n'est pas déjà présent dans le conteneur.
+> Si c'est le cas, on régénère son numéro de vol jusqu'a ce qu'il soit valide.
+
 ### C - Data-driven AircraftType (optionnel)
+
+> Pas fait
 
 On aimerait pouvoir charger les paramètres des avions depuis un fichier.
 
@@ -104,6 +130,8 @@ Si vous voulez de nouveaux sprites, vous pouvez en trouver sur [cette page](http
 ---
 
 ## Objectif 3 - Pool de textures (optionnel)
+
+> Pas fait
 
 Pour le moment, chacun des `AircraftType` contient et charge ses propres sprites.
 On pourrait néanmoins avoir différents `AircraftType` qui utilisent les mêmes sprites.

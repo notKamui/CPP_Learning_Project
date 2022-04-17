@@ -8,7 +8,8 @@ enum WaypointType
 {
     wp_air,
     wp_ground,
-    wp_terminal
+    wp_terminal,
+    wp_circle
 };
 
 class Waypoint : public Point3D
@@ -20,7 +21,7 @@ public:
         Point3D { position }, type { type_ }
     {}
 
-    bool is_on_ground() const { return type != wp_air; }
+    bool is_on_ground() const { return type == wp_ground || type == wp_terminal; }
     bool is_at_terminal() const { return type == wp_terminal; }
 };
 

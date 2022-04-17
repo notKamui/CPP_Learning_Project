@@ -76,9 +76,18 @@ void Aircraft::operate_landing_gear()
     }
 }
 
-void Aircraft::add_waypoint(const Waypoint& wp, const bool front)
+void Aircraft::refill(long &fuel_stock)
 {
-    if (front)
+    long needed = std::min(fuel_stock, FUEL_MAX - fuel);
+    fuel_stock -= needed;
+    fuel += needed;
+    if (needed != 0) std::cout << flight_number << " refilled for " << needed << " fuel units" << std::endl;
+}
+
+template <bool front>
+void Aircraft::add_waypoint(const Waypoint& wp)
+{
+    if constexpr (front)
     {
         waypoints.push_front(wp);
     }
@@ -88,18 +97,39 @@ void Aircraft::add_waypoint(const Waypoint& wp, const bool front)
     }
 }
 
-void Aircraft::move()
+void Aircraft::move(float dt)
 {
+    assert(dt >= 0.0f);
+    if (is_circling() && !has_terminal())
+    {
+        auto new_waypoints = control.reserve_terminal(*this);
+        if (!new_waypoints.empty())
+        {
+            waypoints.clear();
+            for (const auto& wp: new_waypoints)
+            {
+                add_waypoint<false>(wp);
+            }
+        }
+    }
     if (waypoints.empty())
     {
-        waypoints = control.get_instructions(*this);
+        if (serviced) {
+            finished = true;
+        }
+
+        //waypoints = control.get_instructions(*this);
+        for (const auto& wp: control.get_instructions(*this))
+        {
+            add_waypoint<false>(wp);
+        }
     }
 
     if (!is_at_terminal)
     {
         turn_to_waypoint();
         // move in the direction of the current speed
-        pos += speed;
+        pos += speed * dt;
 
         // if we are close to our next waypoint, stike if off the list
         if (!waypoints.empty() && distance_to(waypoints.front()) < DISTANCE_THRESHOLD)
@@ -120,7 +150,7 @@ void Aircraft::move()
             if (!landing_gear_deployed)
             {
                 using namespace std::string_literals;
-                throw AircraftCrash { flight_number + " crashed into the ground"s };
+                throw AircraftCrash { flight_number, pos, speed, AircraftCrash::Reason::BAD_LANDING };
             }
         }
         else
@@ -131,6 +161,13 @@ void Aircraft::move()
             {
                 pos.z() -= SINK_FACTOR * (SPEED_THRESHOLD - speed_len);
             }
+
+            fuel--;
+            if (fuel <= 0)
+            {
+                using namespace std::string_literals;
+                throw AircraftCrash { flight_number, pos, speed, AircraftCrash::Reason::OUT_OF_FUEL };
+            }
         }
 
         // update the z-value of the displayable structure
@@ -140,5 +177,5 @@ void Aircraft::move()
 
 void Aircraft::display() const
 {
-    type.texture.draw(project_2D(pos), { PLANE_TEXTURE_DIM, PLANE_TEXTURE_DIM }, get_speed_octant());
+    type.texture.draw(project_2D(pos), Point2D { PLANE_TEXTURE_DIM, PLANE_TEXTURE_DIM }, get_speed_octant());
 }
