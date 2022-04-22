@@ -74,6 +74,7 @@ public:
     bool is_circling() const {return !waypoints.empty() && waypoints.back().type == wp_circle;}
 
     bool is_low_on_fuel() const {return fuel < FUEL_THRESHOLD;}
+    Point3D position() const { return pos; }
 
     void refill(long &fuel_stock);
     void display() const override;

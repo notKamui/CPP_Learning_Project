@@ -7,6 +7,7 @@
 
 const MediaPath one_lane_airport_sprite_path = { "airport_1lane.png" };
 const MediaPath two_lane_airport_sprite_path = { "airport_2lane.png" };
+const MediaPath crashed_aircraft_sprite_path = { "crashed_aircraft.png" };
 
 // number of cycles needed to service an aircraft at a terminal
 constexpr unsigned int SERVICE_CYCLES = 40u;

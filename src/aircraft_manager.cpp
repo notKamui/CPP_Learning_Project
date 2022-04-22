@@ -1,5 +1,7 @@
 #include "aircraft_manager.hpp"
 
+#include "crashed_aircraft.hpp"
+
 void AircraftManager::add(std::unique_ptr<Aircraft>& aircraft)
 {
     assert(aircraft != nullptr);
@@ -23,6 +25,9 @@ void AircraftManager::move(float dt)
        } catch (const AircraftCrash& e) {
            std::cerr << e.what() << std::endl;
            crashed_aircrafts++;
+           auto pos = aircraft->position();
+           auto crash = std::make_unique<CrashedAircraft>(pos);
+           crashed_aircrafts_vector.emplace_back(std::move(crash));
            return true;
        }
     }), aircrafts.end());

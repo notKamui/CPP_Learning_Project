@@ -6,11 +6,14 @@
 #include <string>
 #include <vector>
 
+#include "crashed_aircraft.hpp"
+
 class AircraftManager : public GL::DynamicObject
 {
 private:
     std::vector<std::unique_ptr<Aircraft>> aircrafts;
     int crashed_aircrafts = 0;
+    std::vector<std::unique_ptr<CrashedAircraft>> crashed_aircrafts_vector;
 
 public:
     void add(std::unique_ptr<Aircraft>& aircraft);
